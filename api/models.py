@@ -13,7 +13,6 @@ class Driver(models.Model):
     lat = models.FloatField()
     lon = models.FloatField()
     point = models.PointField(srid=UNIT_SRID)
-    objects = models.GeoManager()
 
     class Meta:
         """ the postgres db table """
@@ -35,7 +34,6 @@ class Shipment(models.Model):
                                         models.DO_NOTHING,
                                         db_column='driver',
                                         null=True)
-    objects = models.GeoManager()
     
     class Meta:
         """ the postgres db table """

@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django_celery_beat',
     'rest_framework',
+    'maship',
     'api',
+    'etl'
 ]
 
 MIDDLEWARE = [
