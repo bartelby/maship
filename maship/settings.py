@@ -25,7 +25,12 @@ SECRET_KEY = 'l!f92kd4yuskibevlyfhw2jqc1n^qn^c#tz7a7yr#=j358q6+i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'cnex.biz',     #A domain name pointing to the server hosting the app for development
+    'challenge.shipwithbolt.com',  #The domain specified in the problem stmt
+]
 
 
 # Application definition
@@ -74,14 +79,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'maship.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'maship',
         'USER': 'maship',

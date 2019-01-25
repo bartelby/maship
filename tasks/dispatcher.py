@@ -8,7 +8,6 @@
 import os
 import time
 import logging
-import threading
 from json import loads as json_loads
 from json import dumps as json_dumps
 from django.contrib.gis.db.models.functions import Distance
@@ -37,32 +36,41 @@ class Dispatcher(object):
 
     def run(self, *args, **kwargs):
         """
-            (1) Loop through shipments
-            (2) For each shipment, dispatch to the three nearest drivers
+            (1) Loop through shipments that have not yet been accepted
+            (2) For each shipment, dispatch to the three nearest available drivers
             (3)
         """
-        while True:
+        shipments = Shipment.objects.exclude(driver_accepted__isnull=False)
+        while shipments:
             # Shipments that have not been accepted by a driver:
-            shipments = Shipment.objects.exclude(driver_accepted__is_null=False)
             for shipment in shipments:
-                #TODO: filter out drivers that have not accepted any shipment and
-                # that have rejected this shipment
-                drivers = Driver.objects.exclude(shipment_accepted__is_null=False) \
-                                                 .annotate(distance=Distance('point', shipment.point)) \
-                                                 .order_by('distance')[:3]
+                dispatched = Dispatch.objects.filter(shipment=shipment).values('driver')
+                ids = [driver.driverId for driver in dispatched]
+                drivers = Driver.objects.exclude(shipment_accepted__isnull=False) \
+                                        .exclude(driverId__in=ids) \
+                                        .annotate(distance=Distance('point', shipment.point)) \
+                                        .order_by('distance')[:3]
                 print("SHIPMENT", shipment)
                 for driver in drivers:
-                    print("driver", driver, "distance", driver.distance)
-
-            
+                    print("dispatch to driver", driver, "distance", driver.distance)
+                    self.dispatch(shipment, driver)
+            shipments = Shipment.objects.exclude(driver_accepted__isnull=False)
             time.sleep(10)
 
-    def start(self):
-        t = threading.Thread(target=self.run, args=(), kwargs={})
-        t.run()
-        print("Thread started")
-        return
+    def dispatch(self, shipment, driver):
+        """
+            Create a dispatch for a shipment by hitting the following endpoint:
+            POST http://challenge.shipwithbolt.com/driver/:driverId/dispatch
+            Replace :driverId in the URL with the driverId you are dispatching to
+            Pass in as the body in JSON format:
+            {
+                shipmentId: x (number)
+            }
+            If the driverId is invalid (does not exist in the driver JSON file), a 404 error will be returned.
+            If the shipmentId is missing or invalid (does not exist in the shipment JSON file), a 400 error will be
+        """
+        pass
 
 if __name__ == '__main__':
     dispatcher = Dispatcher()
-    dispatcher.start()
+    dispatcher.run()

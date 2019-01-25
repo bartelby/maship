@@ -46,6 +46,8 @@ class Test(TestCase):
         actual =  [driver.driverId for driver in Driver.objects.annotate(distance=Distance('point', boston)).order_by('distance')]
         expected = [3, 72, 1]
         self.assertEqual(actual, expected)
+        available_drivers = Driver.objects.exclude(shipment_accepted__isnull=False)
+        self.assertEquals(len(available_drivers),3)
 
     def test_200_shipment(self):
         boston = Point(-71.0589, 42.3601)
