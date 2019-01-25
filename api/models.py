@@ -12,6 +12,10 @@ class Driver(models.Model):
     driverId = models.IntegerField(primary_key=True)
     lat = models.FloatField()
     lon = models.FloatField()
+    shipment_accepted = models.ForeignKey("Shipment",
+                                          models.DO_NOTHING,
+                                          db_column='shipment_accepted',
+                                          null=True)
     point = models.PointField(srid=UNIT_SRID)
 
     class Meta:
@@ -19,7 +23,7 @@ class Driver(models.Model):
         db_table = 'driver'
 
     def __str__(self):
-        return '%s %s %s' % (self.driverId, self.lat, self.lon)
+        return '%s %s %s %a' % (self.driverId, self.lat, self.lon, self.shipment_accepted)
 
 class Shipment(models.Model):
     """

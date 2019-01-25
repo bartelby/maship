@@ -79,7 +79,9 @@ class Test(TestCase):
         self.make_dispatch(boston_driver, cleveland_shipment, False)
         actual = len(Dispatch.objects.all())
         self.assertEquals(actual, 2)
+        # Dispatched shipment accepted
         accepted = Dispatch.objects.filter(accepted=True).first()
-        self.assertEqual(accepted.driver, boston_driver)
+        self.assertEqual(accepted.shipment, newton_shipment)
+        # dispatched shipment rejected
         rejected = Dispatch.objects.filter(accepted=False).first()
         self.assertEqual(rejected.shipment, cleveland_shipment)

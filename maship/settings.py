@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'django_celery_beat',
+    #'django_celery_beat',     #NOT NEEDED for ths project
     'rest_framework',
-    'maship',
     'api',
     'etl'
 ]
@@ -134,7 +133,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#Celery stuff
+#Celery stuff - NOT NEEDED for tthis project
+"""
 BROKER_TRANSPORT = 'redis'
 BROKER_HOST = 'localhost'
 BROKER_PORT = 6379
@@ -147,4 +147,4 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IGNORE_RESULT = True
 CELERY_BEAT_SCHEDULE = {}
-
+"""
