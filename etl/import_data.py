@@ -8,7 +8,7 @@ from json import loads as json_loads
 import django
 from django.contrib.gis.geos import Point
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'maship.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'maship.maship.settings')
 django.setup()
 from api.models import Driver, Shipment
 
