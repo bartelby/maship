@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from api import views
 from api.dispatcher import Dispatcher
@@ -10,7 +11,7 @@ urlpatterns = [
     path('shipment/<int:pk>/', views.ShipmentDetail.as_view()),
     path('dispatch/', views.DispatchList.as_view()),
     path('dispatch/<int:pk>/', views.DispatchDetail.as_view()),
-    path('driver/<int:pk>/dispatch/$', Dispatcher.as_view())
+    path('driver/<int:driverId>/dispatch/', Dispatcher.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

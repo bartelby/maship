@@ -21,26 +21,45 @@ import requests
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from .models import Driver, Shipment, Dispatch
+from django.core.exceptions import ObjectDoesNotExist
+import random
 
 class Dispatcher(APIView):
     
-    def get(self, request):
-        driver_id = request.GET.get('driver', None)
-        return self.dispatcher(driver_id)
+    def get(self, request, driverId):
+        shipmentId = request.GET.get('shipmentId', None)
+        return self.dispatcher_guts(driverId, shipmentId)
 
-    def dispatcher(driver_id, shipment_id=None):
-        if not driver_id:
-            response = HttpResponse(json_dumps({"ERROR": 'No driver specified'}),
+    def post(self, request, driverId):
+        shipmentId = request.POST.get('shipmentId', None)
+        return self.dispatcher_guts(driverId, shipmentId)
+    
+    def dispatcher_guts(self, driver_id, shipment_id=None):
+        driver = None
+        shipment = None
+        try:
+            driver = Driver.objects.get(driverId=int(driver_id))
+        except ObjectDoesNotExist:
+            response = HttpResponse(json_dumps({"ERROR": "Invalid driver"}),
                                     content_type='application/json')
-            response['status_code'] = 404
+            response['response_code'] = 404
             return response
-        driver = Driver.objects.get(driverId=driver_id)
-        if not driver:
-            response = HttpResponse(json_dumps({"ERROR": 'Invalid driver'}),
+        try:
+            shipment = Shipment.objects.get(shipmentId=shipment_id)
+        except ObjectDoesNotExist:
+            response = HttpResponse(json_dumps({"ERROR": "Invalid shipment"}),
                                     content_type='application/json')
-            response['status_code'] = 404
+            response['response_code'] = 400
             return response
-        respnse = HttpResposnse(json_dumps({'SUCCESS': 'Hello Peter!'}),
+        #WE HAVE A DRIVER AND A SHIPMENT.
+        p_of_accept = random.randint(1, 101)
+        accept = p_of_accept >= 85
+        payload = {
+            'response': 'Accepted' if accept else 'Denied',
+            'driverId': driver_id,
+            'shipmentId': shipment_id
+        }
+        response = HttpResponse(json_dumps(payload),
                                 content_type='application/json')
         return response
                   

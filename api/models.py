@@ -30,7 +30,7 @@ class Shipment(models.Model):
         Shipment consists of an ID, the shipment's geographical coordinates
         and a pointer to the driver that accepts the shipment.
     """
-    shipmentId = models.BigIntegerField(primary_key=True)
+    shipmentId = models.CharField(max_length=64, primary_key=True)
     lat = models.FloatField()
     lon = models.FloatField()
     point = models.PointField(srid=UNIT_SRID)
@@ -47,7 +47,7 @@ class Shipment(models.Model):
         return '%s %s %s %s' % (self.shipmentId,
                                 self.lat,
                                 self.lon,
-                                self.driver_accepted if self.driver_accepted else '')
+                                self.driver_accepted)
 
 class Dispatch(models.Model):
     """
